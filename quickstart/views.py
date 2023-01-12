@@ -6,54 +6,92 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import generics
 from rest_framework import permissions
-from quickstart.serializers import UserSerializer, GroupSerializer , EmployeeSerializer
+from quickstart.serializers import UserSerializer, GroupSerializer , EmployeeSerializer,EmployeeListSerializer
 from rest_framework import status
 from django.http import Http404
 
 
-class Employeelist(generics.ListCreateAPIView):
 
+
+
+# VIEWS SET
+class EmployeeListViewSet(viewsets.ModelViewSet):
     queryset = employee.objects.all()
-    serializer_class = EmployeeSerializer
-
-# class EmployeeDetails(generics.)
-
-
-# class Employeelist(APIView):
-#
-#      def get(self,request, format=None):
-#
-#          employies = employee.objects.all()
-#          serializer = EmployeeSerializer(employies,many=True)
-#          return Response(serializer.data)
-#
-#      def post(self, request, format=None):
-#
-#           serializer = EmployeeSerializer(data=request.data)
-#           serializer.is_valid(raise_exception=True)
-#           serializer.save()
-#           return Response(serializer.data, status=status.HTTP_201_CREATED)
-#
-#
-#
-# class EmployeeDetails(APIView):
-#
-#      def get_object(self, pk):
-#          try:
-#              return employee.objects.get(pk=pk)
-#          except employee.DoesNotExist:
-#              raise Http404
-#
-#      def delete(self, request, pk, format=None):
-#          employies = self.get_object(pk)
-#          employies.delete()
-#          return Response(status=status.HTTP_204_NO_CONTENT)
-
-
-class EmployeeViewSet(viewsets.ModelViewSet):
-    queryset = employee.objects.all()
-    serializer_class = EmployeeSerializer
+    serializer_class = EmployeeListSerializer
     permission_classes = [permissions.IsAuthenticated]
+
+
+
+
+# GENERIC API VIEW
+class Employeelist(generics.ListCreateAPIView):
+    queryset = employee.objects.all()
+    serializer_class = EmployeeSerializer
+
+    def get(self, request):
+        return self.list(request)
+    def post(self,request):
+        return self.create(request)
+class EmployeeDetails(generics.RetrieveUpdateDestroyAPIView):
+    queryset = employee.objects.all()
+    serializer_class = EmployeeSerializer
+
+    def get(self, request, *args, **kwargs):
+        return self.retrieve(request, *args, **kwargs)
+
+    def put(self, request,*args, **kwargs):
+        return self.update(request, *args, **kwargs)
+
+    def delete(self, request, *args, **kwargs):
+        return self.destroy(request, *args, **kwargs)
+
+
+
+
+# API VIEWS
+class Employee1list(APIView):
+
+     def get(self,request, format=None):
+
+         employies = employee.objects.all()
+         serializer = EmployeeSerializer(employies,many=True)
+         return Response(serializer.data)
+
+     def post(self, request, format=None):
+
+          serializer = EmployeeSerializer(data=request.data)
+          serializer.is_valid(raise_exception=True)
+          serializer.save()
+          return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+class Employee1Details(APIView):
+
+     def get_object(self, pk):
+         try:
+             return employee.objects.get(pk=pk)
+         except employee.DoesNotExist:
+             raise
+
+     def get(self, request, pk):
+         employies = self.get_object(pk)
+         serializer = EmployeeSerializer(employies)
+         return Response(serializer.data)
+
+     def put(self, request,pk):
+         employies = self.get_object(pk)
+         serializer = EmployeeSerializer(employies, data=request.DATA)
+         if serializer.is_valid():
+             serializer.save()
+             return Response(serializer.data)
+         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+     def delete(self, request,pk):
+         employies = self.get_object(pk)
+         employies.delete()
+         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+
 
 
 class UserViewSet(viewsets.ModelViewSet):
