@@ -42,6 +42,10 @@ INSTALLED_APPS = [
     'quickstart.apps.QuickstartConfig',
     # Rest Framework
     'rest_framework',
+    # Install simple JWT
+    # 'rest_framework_simplejwt',
+    'django_filters',
+
 ]
 
 MIDDLEWARE = [
@@ -55,6 +59,7 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'tutorial.urls'
+
 
 TEMPLATES = [
     {
@@ -140,5 +145,11 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Rest Framework Pagination Settings
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 10
+    'PAGE_SIZE': 10,
+    # Configured to use the simple jwt library
+    #   'DEFAULT_AUTHENTICATION_CLASSES': (
+    #     'rest_framework_simplejwt.authentication.JWTAuthentication',
+    # ),
+    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
+
 }
